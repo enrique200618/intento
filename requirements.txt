@@ -1,9 +1,4 @@
-moviepy
-streamlit
-yfinance
-ta
-pandas
-matplotlib
 openai
 moviepy
-moviepy
+streamlit
+pandas
