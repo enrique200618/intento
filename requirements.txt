@@ -4,3 +4,4 @@ ta
 pandas
 matplotlib
 openai
+moviepy
