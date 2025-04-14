@@ -1,4 +1,5 @@
+streamlit
 openai
 moviepy
-streamlit
-pandas
+Pillow
+requests
