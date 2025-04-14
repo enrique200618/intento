@@ -1,0 +1,66 @@
+# Instalar moviepy si no está instalado (solo para Google Colab o Kaggle)
+!pip install moviepy
+
+# Importar librerías necesarias
+import openai
+import requests
+from moviepy.editor import ImageSequenceClip
+import os
+import time
+
+# Tu clave de OpenAI
+openai.api_key = 'TU_CLAVE_DE_API'
+
+# Función para generar imágenes a partir de texto
+def generate_images(prompt, num_images=5):
+    images = []
+    for _ in range(num_images):
+        response = openai.Image.create(
+            prompt=prompt,
+            n=1,
+            size="1024x1024"
+        )
+        image_url = response['data'][0]['url']
+        image_data = requests.get(image_url).content
+        images.append(image_data)
+        time.sleep(1)  # Para evitar límites de tasa en la API
+    return images
+
+# Guardar las imágenes generadas en archivos temporales
+def save_images(images):
+    saved_images = []
+    for i, img_data in enumerate(images):
+        img_path = f"image_{i}.png"
+        with open(img_path, 'wb') as f:
+            f.write(img_data)
+        saved_images.append(img_path)
+    return saved_images
+
+# Crear video a partir de imágenes
+def create_video_from_images(images):
+    clip = ImageSequenceClip(images, fps=1)  # 1 imagen por segundo
+    video_path = "output_video.mp4"
+    clip.write_videofile(video_path, codec="libx264")
+    return video_path
+
+# Función principal
+def generate_video_from_text(prompt):
+    # Generar imágenes a partir del texto
+    print("Generando imágenes...")
+    images = generate_images(prompt)
+
+    # Guardar imágenes en archivos temporales
+    print("Guardando imágenes...")
+    saved_images = save_images(images)
+
+    # Crear video a partir de las imágenes
+    print("Creando video...")
+    video_path = create_video_from_images(saved_images)
+
+    print(f"Video creado: {video_path}")
+    return video_path
+
+# Ingresar el texto para generar el video
+prompt = "Una escena tranquila de atardecer en la playa, con colores cálidos."
+video = generate_video_from_text(prompt)
+
